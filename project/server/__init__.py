@@ -1,6 +1,8 @@
 # project/server/__init__.py
 
 
+
+
 #################
 #### imports ####
 #################
@@ -13,7 +15,6 @@ from flask_bcrypt import Bcrypt
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
-
 
 ################
 #### config ####
@@ -41,7 +42,6 @@ toolbar = DebugToolbarExtension(app)
 bootstrap = Bootstrap(app)
 db = SQLAlchemy(app)
 
-
 ###################
 ### blueprints ####
 ###################
@@ -50,7 +50,6 @@ from project.server.user.views import user_blueprint
 from project.server.main.views import main_blueprint
 app.register_blueprint(user_blueprint)
 app.register_blueprint(main_blueprint)
-
 
 ###################
 ### flask-login ####
@@ -66,6 +65,27 @@ login_manager.login_message_category = 'danger'
 def load_user(user_id):
     return User.query.filter(User.id == int(user_id)).first()
 
+
+###################
+### admin stuff ####
+###################
+from project.server.models import Brand
+from project.server.models import Product
+from project.server.models import Size
+from project.server.models import Inventory
+from project.server.models import Location
+
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
+
+
+admin = Admin(app, template_mode='bootstrap3')
+admin.add_view(ModelView(User, db.session, endpoint='user-admin'))
+admin.add_view(ModelView(Brand, db.session, endpoint='brand-admin'))
+admin.add_view(ModelView(Product, db.session, endpoint='product-admin'))
+admin.add_view(ModelView(Size, db.session, endpoint='size-admin'))
+admin.add_view(ModelView(Inventory, db.session, endpoint='inventory-admin'))
+admin.add_view(ModelView(Location, db.session, endpoint='location-admin'))
 
 ########################
 #### error handlers ####
