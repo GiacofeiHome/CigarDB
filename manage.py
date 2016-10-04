@@ -7,6 +7,7 @@ import coverage
 
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
+from flask_security.utils import encrypt_password
 
 COV = coverage.coverage(
     branch=True,
@@ -19,8 +20,8 @@ COV = coverage.coverage(
 )
 COV.start()
 
-from project.server import app, db
-from project.server.models import User
+from project.server import app, db, user_datastore
+from project.server.models import User, Role
 
 
 migrate = Migrate(app, db)
@@ -74,8 +75,25 @@ def drop_db():
 @manager.command
 def create_admin():
     """Creates the admin user."""
-    db.session.add(User(email='ad@min.com', password='admin', admin=True))
-    db.session.commit()
+
+    db.drop_all()
+    db.create_all()
+
+    with app.app_context():
+        user_role = Role(name='user')
+        super_user_role = Role(name='superuser')
+        db.session.add(user_role)
+        db.session.add(super_user_role)
+        db.session.commit()
+
+        test_user = user_datastore.create_user(
+            first_name='Admin',
+            email='ad@min.com',
+            password=encrypt_password('admin'),
+            roles=[user_role, super_user_role]
+        )
+
+        db.session.commit()
 
 
 @manager.command
