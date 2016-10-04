@@ -84,5 +84,26 @@ def create_data():
     pass
 
 
+@manager.command
+def dump_data():
+    """Creates sample data."""
+    import sqlite3
+    import csv
+
+    cursor = db.engine.execute("SELECT name FROM sqlite_master WHERE type='table';")
+
+    for table in cursor.fetchall():
+        table_name = table[0]
+        print(table_name)
+
+        csvfile = os.path.join('fixtures', '{}.csv'.format(table_name))
+        
+        with open(csvfile, 'w') as outfile:
+            outcsv = csv.writer(outfile)
+            cursor = db.engine.execute('select * from {}'.format(table_name))
+            outcsv.writerow([x for x in cursor.keys()])
+            outcsv.writerows(cursor.fetchall())
+
+
 if __name__ == '__main__':
     manager.run()
