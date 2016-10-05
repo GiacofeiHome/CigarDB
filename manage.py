@@ -7,7 +7,6 @@ import coverage
 
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-from flask_security.utils import encrypt_password
 
 COV = coverage.coverage(
     branch=True,
@@ -20,8 +19,8 @@ COV = coverage.coverage(
 )
 COV.start()
 
-from project.server import app, db, user_datastore
-from project.server.models import User, Role
+from project.server import app, db
+from project.server.models import User
 
 
 migrate = Migrate(app, db)
@@ -75,52 +74,14 @@ def drop_db():
 @manager.command
 def create_admin():
     """Creates the admin user."""
-
-    db.drop_all()
-    db.create_all()
-
-    with app.app_context():
-        user_role = Role(name='user')
-        super_user_role = Role(name='superuser')
-        db.session.add(user_role)
-        db.session.add(super_user_role)
-        db.session.commit()
-
-        test_user = user_datastore.create_user(
-            first_name='Admin',
-            email='ad@min.com',
-            password=encrypt_password('admin'),
-            roles=[user_role, super_user_role]
-        )
-
-        db.session.commit()
+    db.session.add(User(email='ad@min.com', password='admin', admin=True))
+    db.session.commit()
 
 
 @manager.command
 def create_data():
     """Creates sample data."""
     pass
-
-
-@manager.command
-def dump_data():
-    """Creates sample data."""
-    import sqlite3
-    import csv
-
-    cursor = db.engine.execute("SELECT name FROM sqlite_master WHERE type='table';")
-
-    for table in cursor.fetchall():
-        table_name = table[0]
-        print(table_name)
-
-        csvfile = os.path.join('fixtures_new', '{}.csv'.format(table_name))
-        
-        with open(csvfile, 'w') as outfile:
-            outcsv = csv.writer(outfile)
-            cursor = db.engine.execute('select * from {}'.format(table_name))
-            outcsv.writerow([x for x in cursor.keys()])
-            outcsv.writerows(cursor.fetchall())
 
 
 if __name__ == '__main__':

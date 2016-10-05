@@ -1,26 +1,23 @@
 # project/server/__init__.py
 
 
-
-
-#################
-#### imports ####
-#################
+#------------------------------------------------------------------------------
+# imports
+#------------------------------------------------------------------------------
 
 import os
 
-from flask import Flask, render_template, url_for
-from flask_login import LoginManager
+from flask import Flask, render_template, redirect, url_for, request
+from flask_login import LoginManager, current_user
 from flask_bcrypt import Bcrypt
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
-from flask_security import Security, SQLAlchemyUserDatastore, \
-    UserMixin, RoleMixin, login_required, current_user
 
-################
-#### config ####
-################
+
+#------------------------------------------------------------------------------
+# config
+#------------------------------------------------------------------------------
 
 app = Flask(
     __name__,
@@ -33,9 +30,9 @@ app_settings = os.getenv('APP_SETTINGS', 'project.server.config.DevelopmentConfi
 app.config.from_object(app_settings)
 
 
-####################
-#### extensions ####
-####################
+#------------------------------------------------------------------------------
+# extensions
+#------------------------------------------------------------------------------
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -44,19 +41,38 @@ toolbar = DebugToolbarExtension(app)
 bootstrap = Bootstrap(app)
 db = SQLAlchemy(app)
 
-###################
-### blueprints ####
-###################
+
+#------------------------------------------------------------------------------
+# blueprints
+#------------------------------------------------------------------------------
 
 from project.server.user.views import user_blueprint
 from project.server.main.views import main_blueprint
 app.register_blueprint(user_blueprint)
 app.register_blueprint(main_blueprint)
 
-###################
-### admin stuff ####
-###################
-from project.server.models import User, Role
+
+#------------------------------------------------------------------------------
+# flask-login
+#------------------------------------------------------------------------------
+
+from project.server.models import User
+
+login_manager.login_view = "user.login"
+login_manager.login_message_category = 'danger'
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.filter(User.id == int(user_id)).first()
+
+#------------------------------------------------------------------------------
+# flask-admin
+#------------------------------------------------------------------------------
+from flask_admin import Admin
+from flask_admin import helpers as admin_helpers
+from flask_admin.form import rules
+from flask_admin.contrib.sqla import ModelView
 
 from project.server.models import Brand
 from project.server.models import Product
@@ -66,81 +82,40 @@ from project.server.models import Location
 from project.server.models import Rating
 from project.server.models import Session
 from project.server.models import Transfer
+from project.server.models import Container
+from project.server.models import ContainerType
 
-from flask_admin import Admin
-from flask_admin import helpers as admin_helpers
-from flask_admin.contrib.sqla import ModelView
-
-from flask_security import current_user
-
-# Setup Flask-Security
-user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-security = Security(app, user_datastore)
-        
 # Create customized model view class
-class MyModelView(ModelView):
-    def __init__(self, model, session, name=None, category=None, endpoint=None, url=None, **kwargs):
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-
-        super(MyModelView, self).__init__(model, session, name=name, category=category, endpoint=endpoint, url=url)
+class CustomModelView(ModelView):
 
     def is_accessible(self):
-        if not current_user.is_active or not current_user.is_authenticated:
-            return False
-
-        if current_user.has_role('superuser'):
+        if current_user.admin and current_user.is_authenticated():
             return True
-
+        
         return False
 
-    def _handle_view(self, name, **kwargs):
-        """
-        Override builtin _handle_view in order to redirect users when a view is not accessible.
-        """
-        if not self.is_accessible():
-            if current_user.is_authenticated:
-                # permission denied
-                abort(403)
-            else:
-                # login
-                return redirect(url_for('security.login', next=request.url))
-
-cigar_columns  = [
-    'hash',
-    'product_id',
-    'size_id',
-    'purchase_date',
-    'purchase_date'
-]
-
-admin = Admin(app, template_mode='bootstrap3')
-
-admin.add_view(MyModelView(User, db.session, endpoint='user-admin'))
-admin.add_view(MyModelView(Brand, db.session))
-admin.add_view(MyModelView(Product, db.session))
-admin.add_view(MyModelView(Size, db.session))
-admin.add_view(MyModelView(Cigar, db.session, list_columns=cigar_columns))
-admin.add_view(MyModelView(Location, db.session))
-admin.add_view(MyModelView(Rating, db.session))
-admin.add_view(MyModelView(Session, db.session))
-admin.add_view(MyModelView(Transfer, db.session))
-
-# define a context processor for merging flask-admin's template context into the
-# flask-security views.
-@security.context_processor
-def security_context_processor():
-    return dict(
-        admin_base_template=admin.base_template,
-        admin_view=admin.index_view,
-        h=admin_helpers,
-        get_url=url_for
-    )
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        return redirect(url_for('user.login', next=request.url))
 
 
-########################
-#### error handlers ####
-########################
+admin = Admin(app)
+
+admin.add_view(CustomModelView(User, db.session, endpoint='users'))
+admin.add_view(CustomModelView(Brand, db.session))
+admin.add_view(CustomModelView(Product, db.session))
+admin.add_view(CustomModelView(Size, db.session))
+admin.add_view(CustomModelView(Cigar, db.session))
+admin.add_view(CustomModelView(Location, db.session))
+admin.add_view(CustomModelView(Rating, db.session))
+admin.add_view(CustomModelView(Session, db.session))
+admin.add_view(CustomModelView(Transfer, db.session))
+admin.add_view(CustomModelView(Container, db.session))
+admin.add_view(CustomModelView(ContainerType, db.session))
+
+#------------------------------------------------------------------------------
+# error handlers
+#------------------------------------------------------------------------------
 
 @app.errorhandler(401)
 def forbidden_page(error):

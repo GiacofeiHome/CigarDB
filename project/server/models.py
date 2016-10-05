@@ -1,39 +1,50 @@
 # project/server/models.py
 
-from flask_security import UserMixin, RoleMixin
+
 import datetime
+from flask_login import current_user
 
 from project.server import app, db, bcrypt
 
 
-roles_users = db.Table(
-    'roles_users',
-    db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
-    db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
-)
+class User(db.Model):
 
-class Role(db.Model, RoleMixin):
-    id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(80), unique=True)
-    description = db.Column(db.String(255))
+    __tablename__ = "users"
 
-    def __str__(self):
-        return self.name
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    registered_on = db.Column(db.DateTime, nullable=False)
+    admin = db.Column(db.Boolean, nullable=False, default=False)
 
+    locations = db.relationship('Location', backref='user', lazy='dynamic')
+    cigars = db.relationship('Cigar', backref='user', lazy='dynamic')
+    containers = db.relationship('Container', backref='user', lazy='dynamic')
+    ratings = db.relationship('Rating', backref='user', lazy='dynamic')
+    sessions = db.relationship('Session', backref='user', lazy='dynamic')
 
-class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(255))
-    last_name = db.Column(db.String(255))
-    email = db.Column(db.String(255), unique=True)
-    password = db.Column(db.String(255))
-    active = db.Column(db.Boolean())
-    confirmed_at = db.Column(db.DateTime())
-    roles = db.relationship('Role', secondary=roles_users,
-                            backref=db.backref('user', lazy='dynamic'))
+    def __init__(self, email, password, admin=False):
+        self.email = email
+        self.password = bcrypt.generate_password_hash(
+            password, app.config.get('BCRYPT_LOG_ROUNDS')
+        )
+        self.registered_on = datetime.datetime.now()
+        self.admin = admin
 
-    def __str__(self):
-        return self.email
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return self.id
+
+    def __repr__(self):
+        return '<{0}>'.format(self.email)
 
 
 class Brand(db.Model):
@@ -73,11 +84,12 @@ class Size(db.Model):
 class Location(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(64))
+    owner = db.Column(db.String(64), db.ForeignKey('users.id'), default=current_user)
 
     cigar = db.relationship('Cigar', backref='location', lazy='dynamic')
 
     def __repr__(self):
-        return '{}'.format(self.name)
+        return '{} {}'.format(self.owner, self.name)
 
 
 session_inventory = db.Table(
@@ -88,6 +100,7 @@ session_inventory = db.Table(
 
 class Cigar(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    owner = db.Column(db.String(64), db.ForeignKey('users.id'), default=current_user)
     hash = db.Column(db.String(64), unique=True)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
     size_id = db.Column(db.Integer, db.ForeignKey('size.id'))
@@ -97,7 +110,8 @@ class Cigar(db.Model):
     ratings = db.relationship('Rating', backref='cigar', lazy='dynamic')
 
     def __repr__(self):
-        return '{} ({}) - {}'.format(
+        return '{} {} ({}) - {}'.format(
+            self.owner,
             self.product.name,
             self.size.name,
             self.location.name
@@ -106,6 +120,7 @@ class Cigar(db.Model):
 
 class Rating(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    owner = db.Column(db.String(64), db.ForeignKey('users.id'), default=current_user)
     cigar_id = db.Column(db.String(64), db.ForeignKey('cigar.id'))
     session_id = db.Column(db.Integer, db.ForeignKey('session.id'))
     app_notes = db.Column(db.String(200), nullable=True)
@@ -119,19 +134,22 @@ class Rating(db.Model):
 
     def __repr__(self):
         score = self.app_score + self.smoke_score + self.taste_score + self.overall_score
-        return '{} ({})'.format(self.session.date, score)
+        return '{} {} ({})'.format(self.owner, self.session.date, score)
 
 
 class Session(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    owner = db.Column(db.String(64), db.ForeignKey('users.id'), default=current_user)
     date = db.Column(db.Date)
     cigars = db.relationship('Cigar', secondary=session_inventory,
                             backref=db.backref('session', lazy='dynamic'))
     ratings = db.relationship('Rating', backref='session', lazy='dynamic')
 
     def __repr__(self):
-        return '{} Smoked: {}'.format(
-            self.date, ['{} {}'.format(x.product.brand.name, x.product.name) for x in self.cigars]
+        return '{} {} Smoked: {}'.format(
+            self.owner,
+            self.date,
+            ['{} {}'.format(x.product.brand.name, x.product.name) for x in self.cigars]
         )
 
 
@@ -143,20 +161,30 @@ class Transfer(db.Model):
     date = db.Column(db.DateTime)
 
 
-#~ class ContainerType(db.Model):
-    #~ id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    #~ name = db.Column(db.String(64))
+class ContainerType(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(64))
+    containers = db.relationship('Container', backref='container_type', lazy='dynamic')
+
+    def __repr__(self):
+        return self.name
 
 
-#~ container_inventory = db.Table(
-    #~ 'container_inventory',
-    #~ db.Column('container_id', db.Integer(), db.ForeignKey('container.id')),
-    #~ db.Column('hash', db.String(64), db.ForeignKey('cigar.hash'))
-#~ )
-#~ class Container(db.Model):
-    #~ id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    #~ name = db.Column(db.String(64))
-    #~ type_id = db.Column(db.Integer, db.ForeignKey('container_type.id'))
-    #~ parent = db.Column(db.Integer, db.ForeignKey('container.id'))
-    #~ cigars = db.relationship('Cigar', secondary=container_inventory,
-                            #~ backref=db.backref('container', lazy='dynamic'))
+container_inventory = db.Table(
+    'container_inventory',
+    db.Column('container_id', db.Integer(), db.ForeignKey('container.id')),
+    db.Column('hash', db.String(64), db.ForeignKey('cigar.hash'))
+)
+
+class Container(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    owner = db.Column(db.String(64), db.ForeignKey('users.id'), default=current_user)
+    name = db.Column(db.String(64))
+    type_id = db.Column(db.Integer, db.ForeignKey('container_type.id'))
+    parent = db.Column(db.Integer, db.ForeignKey('container.id'))
+
+    cigars = db.relationship('Cigar', secondary=container_inventory,
+                            backref=db.backref('container', lazy='dynamic'))
+
+    def __repr__(self):
+        return '{} {}'.format(self.owner, self.name)

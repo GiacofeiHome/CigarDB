@@ -1,4 +1,4 @@
-id,session,hash
-1,1,088ec60b7cf2e357c2481b731fd251597ca4ad93
-2,2,0e23355a6641d84e21386047643b05d4a02996af
-3,4,cdffc40fbf12c9fe68b1ded4ff21055db384c09a
+id,session_id,cigar_id
+1,1,1
+2,2,4
+3,4,2
