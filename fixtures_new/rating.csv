@@ -1,0 +1,5 @@
+id,cigar_id,session_id,app_notes,app_score,smoke_notes,smoke_score,taste_notes,taste_score,overall_notes,overall_score
+1,1,1,-,15,-,20,-,20,-,20
+2,4,2,-,15,-,20,Lots of peppery spice and some woodiness.,20,-,25
+3,6,3,-,12,-,15,-,20,Very mild,25
+4,2,4,-,14,Somewhat uneven burn. This may have been my own fault due to smoking while changing the oil in the car.  Otherwise it seemed totally fine.,20,-,20,-,25
