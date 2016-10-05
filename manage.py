@@ -114,7 +114,7 @@ def dump_data():
         table_name = table[0]
         print(table_name)
 
-        csvfile = os.path.join('fixtures', '{}.csv'.format(table_name))
+        csvfile = os.path.join('fixtures_new', '{}.csv'.format(table_name))
         
         with open(csvfile, 'w') as outfile:
             outcsv = csv.writer(outfile)

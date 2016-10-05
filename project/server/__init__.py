@@ -54,28 +54,18 @@ app.register_blueprint(user_blueprint)
 app.register_blueprint(main_blueprint)
 
 ###################
-### flask-login ####
-###################
-
-from project.server.models import User, Role
-
-#~ login_manager.login_view = "user.login"
-#~ login_manager.login_message_category = 'danger'
-
-
-#~ @login_manager.user_loader
-#~ def load_user(user_id):
-    #~ return User.query.filter(User.id == int(user_id)).first()
-
-
-###################
 ### admin stuff ####
 ###################
+from project.server.models import User, Role
+
 from project.server.models import Brand
 from project.server.models import Product
 from project.server.models import Size
 from project.server.models import Cigar
 from project.server.models import Location
+from project.server.models import Rating
+from project.server.models import Session
+from project.server.models import Transfer
 
 from flask_admin import Admin
 from flask_admin import helpers as admin_helpers
@@ -86,9 +76,14 @@ from flask_security import current_user
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
-
+        
 # Create customized model view class
 class MyModelView(ModelView):
+    def __init__(self, model, session, name=None, category=None, endpoint=None, url=None, **kwargs):
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+        super(MyModelView, self).__init__(model, session, name=name, category=category, endpoint=endpoint, url=url)
 
     def is_accessible(self):
         if not current_user.is_active or not current_user.is_authenticated:
@@ -111,21 +106,25 @@ class MyModelView(ModelView):
                 # login
                 return redirect(url_for('security.login', next=request.url))
 
+cigar_columns  = [
+    'hash',
+    'product_id',
+    'size_id',
+    'purchase_date',
+    'purchase_date'
+]
 
 admin = Admin(app, template_mode='bootstrap3')
-#~ admin = Admin(
-    #~ app,
-    #~ 'Example: Auth',
-    #~ base_template='my_master.html',
-    #~ template_mode='bootstrap3',
-#~ )
 
 admin.add_view(MyModelView(User, db.session, endpoint='user-admin'))
-admin.add_view(MyModelView(Brand, db.session, endpoint='brand-admin'))
-admin.add_view(MyModelView(Product, db.session, endpoint='product-admin'))
-admin.add_view(MyModelView(Size, db.session, endpoint='size-admin'))
-admin.add_view(MyModelView(Cigar, db.session, endpoint='inventory-admin'))
-admin.add_view(MyModelView(Location, db.session, endpoint='location-admin'))
+admin.add_view(MyModelView(Brand, db.session))
+admin.add_view(MyModelView(Product, db.session))
+admin.add_view(MyModelView(Size, db.session))
+admin.add_view(MyModelView(Cigar, db.session, list_columns=cigar_columns))
+admin.add_view(MyModelView(Location, db.session))
+admin.add_view(MyModelView(Rating, db.session))
+admin.add_view(MyModelView(Session, db.session))
+admin.add_view(MyModelView(Transfer, db.session))
 
 # define a context processor for merging flask-admin's template context into the
 # flask-security views.
