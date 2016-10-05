@@ -108,6 +108,7 @@ class Cigar(db.Model):
     purchase_date = db.Column(db.Date, nullable=True)
     purchase_price = db.Column(db.Numeric(12, 2), nullable=True)
     ratings = db.relationship('Rating', backref='cigar', lazy='dynamic')
+    smoked = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return '{} {} ({}) - {}'.format(
@@ -177,14 +178,36 @@ container_inventory = db.Table(
 )
 
 class Container(db.Model):
+    def __init__(self, parent=None):
+        self.parent = parent
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     owner = db.Column(db.String(64), db.ForeignKey('users.id'), default=current_user)
     name = db.Column(db.String(64))
     type_id = db.Column(db.Integer, db.ForeignKey('container_type.id'))
-    parent = db.Column(db.Integer, db.ForeignKey('container.id'))
+    parent_id = db.Column(db.Integer, db.ForeignKey('container.id'))
+
+    children = db.relationship(
+        'Container',
+
+        # cascade deletions
+        cascade="all",
+
+        # many to one + adjacency list - remote_side
+        # is required to reference the 'remote'
+        # column in the join condition.
+        backref=db.backref("parent", remote_side='Container.id')
+    )
 
     cigars = db.relationship('Cigar', secondary=container_inventory,
                             backref=db.backref('container', lazy='dynamic'))
 
+    #~ def append(self, nodename):
+        #~ self.children[nodename] = Container(nodename, parent=self)
+
     def __repr__(self):
-        return '{} {}'.format(self.owner, self.name)
+        return "Container(name=%r, id=%r, parent_id=%r)" % (
+                    self.name,
+                    self.id,
+                    self.parent_id
+                )
