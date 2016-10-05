@@ -1,10 +1,35 @@
 {% extends "_base.html" %}
 
 {% block content %}
-
 <div class="body-content">
   <div class="row">
     <h1>Welcome!</h1>
+  </div>
+  <div class="row">
+    <h2>Cigars in Stock</h1>
+  </div>
+  <div class="container">
+    <table data-link="row" class="table table-hover">
+      <thead>
+        <tr>
+          <th>Brand</th>
+          <th>Product</th>
+          <th>Location</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for cigar in current_user.cigars %}
+        {% if cigar.smoked == False %}
+        <tr>
+          <td><a href="/brand/{{ cigar.product.brand.id}} ">{{ cigar.product.brand.name }}</a></td>
+          <td><a href="/product/{{ cigar.product.id}} ">{{ cigar.product.name }}</a></td>
+          <td><a href="/location/{{ cigar.location.id}} ">{{ cigar.location.name }}</a></td>
+        </tr>
+        {% endif %}
+      {% endfor %}
+
+      </tbody>
+    </table>
   </div>
 </div>
 
