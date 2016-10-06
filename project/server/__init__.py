@@ -48,9 +48,10 @@ db = SQLAlchemy(app)
 
 from project.server.user.views import user_blueprint
 from project.server.main.views import main_blueprint
+from project.server.cigar.views import cigar_blueprint
 app.register_blueprint(user_blueprint)
 app.register_blueprint(main_blueprint)
-
+app.register_blueprint(cigar_blueprint)
 
 #------------------------------------------------------------------------------
 # flask-login
@@ -74,16 +75,16 @@ from flask_admin import helpers as admin_helpers
 from flask_admin.form import rules
 from flask_admin.contrib.sqla import ModelView
 
-from project.server.models import Brand
-from project.server.models import Product
-from project.server.models import Size
-from project.server.models import Cigar
-from project.server.models import Location
-from project.server.models import Rating
-from project.server.models import Session
-from project.server.models import Transfer
-from project.server.models import Container
-from project.server.models import ContainerType
+from project.server.cigar.models import Brand
+from project.server.cigar.models import Product
+from project.server.cigar.models import Size
+from project.server.cigar.models import Cigar
+from project.server.cigar.models import Location
+from project.server.cigar.models import Rating
+from project.server.cigar.models import Session
+from project.server.cigar.models import Transfer
+from project.server.cigar.models import Container
+from project.server.cigar.models import ContainerType
 
 # Create customized model view class
 class CustomModelView(ModelView):
@@ -105,7 +106,7 @@ admin.add_view(CustomModelView(User, db.session, endpoint='users'))
 admin.add_view(CustomModelView(Brand, db.session))
 admin.add_view(CustomModelView(Product, db.session))
 admin.add_view(CustomModelView(Size, db.session))
-admin.add_view(CustomModelView(Cigar, db.session))
+admin.add_view(CustomModelView(Cigar, db.session, endpoint='cigars'))
 admin.add_view(CustomModelView(Location, db.session))
 admin.add_view(CustomModelView(Rating, db.session))
 admin.add_view(CustomModelView(Session, db.session))
