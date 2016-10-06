@@ -5,9 +5,9 @@
         {
             "type": "table",
             "database": null,
-            "name": "cigar",
+            "name": "size",
             "withoutRowId": true,
-            "ddl": "CREATE TABLE cigar (id INTEGER NOT NULL, hash VARCHAR (64), product_id INTEGER, size_id INTEGER, purchase_date DATE, purchase_price NUMERIC (12, 2), location_id INTEGER, owner VARCHAR (64), PRIMARY KEY (id), FOREIGN KEY (owner) REFERENCES users (id), UNIQUE (hash), FOREIGN KEY (product_id) REFERENCES product (id), FOREIGN KEY (size_id) REFERENCES size (id), FOREIGN KEY (location_id) REFERENCES location (id))",
+            "ddl": "CREATE TABLE size (\n\tid INTEGER NOT NULL, \n\tname VARCHAR(64), \n\twidth_64 NUMERIC(12, 2), \n\twidth_mm NUMERIC(12, 2), \n\tlength_cm NUMERIC(12, 2), \n\tlength_in NUMERIC(12, 2), \n\tPRIMARY KEY (id)\n)",
             "columns": [
                 {
                     "name": "id",
@@ -20,32 +20,268 @@
                     ]
                 },
                 {
-                    "name": "hash",
+                    "name": "name",
                     "type": "VARCHAR"
                 },
                 {
-                    "name": "product_id",
-                    "type": "INTEGER"
-                },
-                {
-                    "name": "size_id",
-                    "type": "INTEGER"
-                },
-                {
-                    "name": "purchase_date",
-                    "type": "DATE"
-                },
-                {
-                    "name": "purchase_price",
+                    "name": "width_64",
                     "type": "NUMERIC (12, 2)"
                 },
                 {
-                    "name": "location_id",
-                    "type": "INTEGER"
+                    "name": "width_mm",
+                    "type": "NUMERIC (12, 2)"
+                },
+                {
+                    "name": "length_cm",
+                    "type": "NUMERIC (12, 2)"
+                },
+                {
+                    "name": "length_in",
+                    "type": "NUMERIC (12, 2)"
+                }
+            ],
+            "constraints": [
+                {
+                    "type": "PRIMARY KEY",
+                    "definition": "PRIMARY KEY (id)\n"
+                }
+            ],
+            "rows": [
+                [
+                    1,
+                    "Cigarillo",
+                    3.5,
+                    21,
+                    8,
+                    8
+                ],
+                [
+                    2,
+                    "Rothschild",
+                    4.5,
+                    48,
+                    11,
+                    19
+                ],
+                [
+                    3,
+                    "Robolo",
+                    4.5,
+                    60,
+                    11,
+                    24
+                ],
+                [
+                    4,
+                    "Robusto",
+                    4.875,
+                    50,
+                    12,
+                    20
+                ],
+                [
+                    5,
+                    "Small Panatela",
+                    5,
+                    33,
+                    13,
+                    13
+                ],
+                [
+                    6,
+                    "Ascot",
+                    4.5,
+                    24,
+                    11,
+                    13
+                ],
+                [
+                    7,
+                    "Petit Corona",
+                    5.125,
+                    42,
+                    13,
+                    17
+                ],
+                [
+                    8,
+                    "Carlota",
+                    5.125,
+                    35,
+                    14,
+                    14
+                ],
+                [
+                    9,
+                    "Corona",
+                    5.5,
+                    42,
+                    14,
+                    17
+                ],
+                [
+                    10,
+                    "Corona Gorda",
+                    5.625,
+                    46,
+                    14,
+                    18
+                ],
+                [
+                    11,
+                    "Panatela",
+                    6,
+                    38,
+                    15,
+                    15
+                ],
+                [
+                    12,
+                    "Toro",
+                    6,
+                    50,
+                    15,
+                    20
+                ],
+                [
+                    13,
+                    "Corona Grande",
+                    6.125,
+                    42,
+                    16,
+                    17
+                ],
+                [
+                    14,
+                    "Lonsdale",
+                    6.5,
+                    42,
+                    17,
+                    17
+                ],
+                [
+                    15,
+                    "Churchill",
+                    7,
+                    47,
+                    18,
+                    19
+                ],
+                [
+                    16,
+                    "Double Corona",
+                    7.625,
+                    49,
+                    19,
+                    19
+                ],
+                [
+                    17,
+                    "Presidente",
+                    8,
+                    50,
+                    20,
+                    20
+                ],
+                [
+                    18,
+                    "Gran Corona",
+                    9.25,
+                    47,
+                    23,
+                    19
+                ],
+                [
+                    19,
+                    "Double Toro\/Gordo",
+                    6,
+                    60,
+                    15,
+                    24
+                ]
+            ]
+        },
+        {
+            "type": "table",
+            "database": null,
+            "name": "location",
+            "withoutRowId": true,
+            "ddl": "CREATE TABLE location (\n\tid INTEGER NOT NULL, \n\tname VARCHAR(64), \n\towner VARCHAR(64), \n\tPRIMARY KEY (id), \n\tFOREIGN KEY(owner) REFERENCES users (id)\n)",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "INTEGER",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL"
+                        }
+                    ]
+                },
+                {
+                    "name": "name",
+                    "type": "VARCHAR"
                 },
                 {
                     "name": "owner",
                     "type": "VARCHAR"
+                }
+            ],
+            "constraints": [
+                {
+                    "type": "PRIMARY KEY",
+                    "definition": "PRIMARY KEY (id)"
+                },
+                {
+                    "type": "FOREIGN KEY",
+                    "definition": "FOREIGN KEY(owner) REFERENCES users (id)\n"
+                }
+            ],
+            "rows": [
+                [
+                    1,
+                    "Smoked",
+                    "2"
+                ],
+                [
+                    2,
+                    "Tupperdor",
+                    "2"
+                ]
+            ]
+        },
+        {
+            "type": "table",
+            "database": null,
+            "name": "container",
+            "withoutRowId": true,
+            "ddl": "CREATE TABLE container (id INTEGER NOT NULL, owner INTEGER (0), name VARCHAR (64), type_id INTEGER, parent_id INTEGER, PRIMARY KEY (id), FOREIGN KEY (owner) REFERENCES users (id), FOREIGN KEY (type_id) REFERENCES container_type (id), FOREIGN KEY (parent_id) REFERENCES container (id))",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "INTEGER",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL"
+                        }
+                    ]
+                },
+                {
+                    "name": "owner",
+                    "type": "INTEGER"
+                },
+                {
+                    "name": "name",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "type_id",
+                    "type": "INTEGER"
+                },
+                {
+                    "name": "parent_id",
+                    "type": "INTEGER"
                 }
             ],
             "constraints": [
@@ -58,144 +294,35 @@
                     "definition": "FOREIGN KEY (owner) REFERENCES users (id)"
                 },
                 {
-                    "type": "UNIQUE",
-                    "definition": "UNIQUE (hash)"
+                    "type": "FOREIGN KEY",
+                    "definition": "FOREIGN KEY (type_id) REFERENCES container_type (id)"
                 },
                 {
                     "type": "FOREIGN KEY",
-                    "definition": "FOREIGN KEY (product_id) REFERENCES product (id)"
-                },
-                {
-                    "type": "FOREIGN KEY",
-                    "definition": "FOREIGN KEY (size_id) REFERENCES size (id)"
-                },
-                {
-                    "type": "FOREIGN KEY",
-                    "definition": "FOREIGN KEY (location_id) REFERENCES location (id)"
+                    "definition": "FOREIGN KEY (parent_id) REFERENCES container (id)"
                 }
             ],
             "rows": [
                 [
                     1,
-                    "088ec60b7cf2e357c2481b731fd251597ca4ad93",
                     1,
-                    4,
-                    "2016-09-23",
-                    6.99,
-                    1,
-                    "2"
-                ],
-                [
-                    2,
-                    "cdffc40fbf12c9fe68b1ded4ff21055db384c09a",
-                    2,
-                    4,
-                    "2016-09-23",
-                    7.79,
-                    1,
-                    "2"
-                ],
-                [
-                    3,
-                    "8797b6393ac3b5a4977d1a0f348a87b0611790a6",
-                    3,
-                    12,
-                    "2016-09-23",
-                    7.29,
-                    2,
-                    "2"
-                ],
-                [
-                    4,
-                    "0e23355a6641d84e21386047643b05d4a02996af",
-                    4,
-                    4,
-                    "2016-09-28",
-                    7.8,
-                    1,
-                    "2"
-                ],
-                [
-                    5,
-                    "a74faaf496cf494f34ddcb48034b5d0dfa3a02bf",
-                    5,
-                    12,
-                    "2016-09-28",
-                    11.65,
-                    2,
-                    "2"
-                ],
-                [
-                    6,
-                    "c0500bba46fe54885e4b47ac79c309e1280f2bda",
-                    6,
-                    4,
-                    "2015-07-10",
-                    5,
-                    1,
-                    "2"
-                ]
-            ]
-        },
-        {
-            "type": "table",
-            "database": null,
-            "name": "container",
-            "withoutRowId": true,
-            "ddl": "CREATE TABLE container (\n\tid INTEGER NOT NULL, \n\towner VARCHAR(64), \n\tname VARCHAR(64), \n\ttype_id INTEGER, \n\tparent INTEGER, \n\tPRIMARY KEY (id), \n\tFOREIGN KEY(owner) REFERENCES users (id), \n\tFOREIGN KEY(type_id) REFERENCES container_type (id), \n\tFOREIGN KEY(parent) REFERENCES container (id)\n)",
-            "columns": [
-                {
-                    "name": "id",
-                    "type": "INTEGER",
-                    "constraints": [
-                        {
-                            "type": "NOT NULL",
-                            "definition": "NOT NULL"
-                        }
-                    ]
-                },
-                {
-                    "name": "owner",
-                    "type": "VARCHAR"
-                },
-                {
-                    "name": "name",
-                    "type": "VARCHAR"
-                },
-                {
-                    "name": "type_id",
-                    "type": "INTEGER"
-                },
-                {
-                    "name": "parent",
-                    "type": "INTEGER"
-                }
-            ],
-            "constraints": [
-                {
-                    "type": "PRIMARY KEY",
-                    "definition": "PRIMARY KEY (id)"
-                },
-                {
-                    "type": "FOREIGN KEY",
-                    "definition": "FOREIGN KEY(owner) REFERENCES users (id)"
-                },
-                {
-                    "type": "FOREIGN KEY",
-                    "definition": "FOREIGN KEY(type_id) REFERENCES container_type (id)"
-                },
-                {
-                    "type": "FOREIGN KEY",
-                    "definition": "FOREIGN KEY(parent) REFERENCES container (id)\n"
-                }
-            ],
-            "rows": [
-                [
-                    1,
-                    "1",
                     "A Box",
                     1,
+                    2
+                ],
+                [
+                    2,
+                    2,
+                    "Big Box O' Stuff",
+                    2,
                     null
+                ],
+                [
+                    3,
+                    2,
+                    "Another Box",
+                    1,
+                    2
                 ]
             ]
         },
@@ -271,9 +398,9 @@
         {
             "type": "table",
             "database": null,
-            "name": "transfer",
+            "name": "rating",
             "withoutRowId": true,
-            "ddl": "CREATE TABLE transfer (id INTEGER NOT NULL, cigar_id VARCHAR (64), from_id INTEGER, to_id INTEGER, date DATETIME, PRIMARY KEY (id), FOREIGN KEY (cigar_id) REFERENCES cigar (id), FOREIGN KEY (from_id) REFERENCES location (id), FOREIGN KEY (to_id) REFERENCES location (id))",
+            "ddl": "CREATE TABLE rating (id INTEGER NOT NULL, owner VARCHAR (64), cigar_id VARCHAR (64), session_id INTEGER, app_notes VARCHAR (200), app_score INTEGER, smoke_notes VARCHAR (200), smoke_score INTEGER, taste_notes VARCHAR (200), taste_score INTEGER, overall_notes VARCHAR (200), overall_score INTEGER, PRIMARY KEY (id), FOREIGN KEY (owner) REFERENCES users (id), FOREIGN KEY (cigar_id) REFERENCES cigar (id), FOREIGN KEY (session_id) REFERENCES session (id))",
             "columns": [
                 {
                     "name": "id",
@@ -286,20 +413,48 @@
                     ]
                 },
                 {
+                    "name": "owner",
+                    "type": "VARCHAR"
+                },
+                {
                     "name": "cigar_id",
                     "type": "VARCHAR"
                 },
                 {
-                    "name": "from_id",
+                    "name": "session_id",
                     "type": "INTEGER"
                 },
                 {
-                    "name": "to_id",
+                    "name": "app_notes",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "app_score",
                     "type": "INTEGER"
                 },
                 {
-                    "name": "date",
-                    "type": "DATETIME"
+                    "name": "smoke_notes",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "smoke_score",
+                    "type": "INTEGER"
+                },
+                {
+                    "name": "taste_notes",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "taste_score",
+                    "type": "INTEGER"
+                },
+                {
+                    "name": "overall_notes",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "overall_score",
+                    "type": "INTEGER"
                 }
             ],
             "constraints": [
@@ -309,26 +464,82 @@
                 },
                 {
                     "type": "FOREIGN KEY",
+                    "definition": "FOREIGN KEY (owner) REFERENCES users (id)"
+                },
+                {
+                    "type": "FOREIGN KEY",
                     "definition": "FOREIGN KEY (cigar_id) REFERENCES cigar (id)"
                 },
                 {
                     "type": "FOREIGN KEY",
-                    "definition": "FOREIGN KEY (from_id) REFERENCES location (id)"
-                },
-                {
-                    "type": "FOREIGN KEY",
-                    "definition": "FOREIGN KEY (to_id) REFERENCES location (id)"
+                    "definition": "FOREIGN KEY (session_id) REFERENCES session (id)"
                 }
             ],
             "rows": [
+                [
+                    1,
+                    "2",
+                    "1",
+                    1,
+                    "-",
+                    15,
+                    "-",
+                    20,
+                    "-",
+                    20,
+                    "-",
+                    20
+                ],
+                [
+                    2,
+                    "2",
+                    "4",
+                    2,
+                    "-",
+                    15,
+                    "-",
+                    20,
+                    "Lots of peppery spice and some woodiness.",
+                    20,
+                    "-",
+                    25
+                ],
+                [
+                    3,
+                    "2",
+                    "6",
+                    3,
+                    "-",
+                    12,
+                    "-",
+                    15,
+                    "-",
+                    20,
+                    "Very mild",
+                    25
+                ],
+                [
+                    4,
+                    "2",
+                    "2",
+                    4,
+                    "-",
+                    14,
+                    "Somewhat uneven burn. This may have been my own fault due to smoking while changing the oil in the car.  Otherwise it seemed totally fine.",
+                    20,
+                    "-",
+                    20,
+                    "-",
+                    25
+                ]
             ]
         },
         {
             "type": "table",
             "database": null,
-            "name": "container_type",
+            "name": "session",
             "withoutRowId": true,
-            "ddl": "CREATE TABLE container_type (\n\tid INTEGER NOT NULL, \n\tname VARCHAR(64), \n\tPRIMARY KEY (id)\n)",
+            "ddl": "CREATE TABLE session (\n\tid INTEGER NOT NULL, \n\towner VARCHAR(64), \n\tdate DATE, \n\tPRIMARY KEY (id), \n\tFOREIGN KEY(owner) REFERENCES users (id)\n)",
             "columns": [
                 {
                     "name": "id",
@@ -341,20 +552,189 @@
                     ]
                 },
                 {
-                    "name": "name",
+                    "name": "owner",
                     "type": "VARCHAR"
+                },
+                {
+                    "name": "date",
+                    "type": "DATE"
                 }
             ],
             "constraints": [
                 {
                     "type": "PRIMARY KEY",
-                    "definition": "PRIMARY KEY (id)\n"
+                    "definition": "PRIMARY KEY (id)"
+                },
+                {
+                    "type": "FOREIGN KEY",
+                    "definition": "FOREIGN KEY(owner) REFERENCES users (id)\n"
                 }
             ],
             "rows": [
                 [
                     1,
-                    "Box"
+                    "2",
+                    "2016-09-23 21:00"
+                ],
+                [
+                    2,
+                    "2",
+                    "2016-09-28 14:00"
+                ],
+                [
+                    3,
+                    "2",
+                    "2015-07-11 21:00"
+                ],
+                [
+                    4,
+                    "2",
+                    "2016-10-03 18:00"
+                ]
+            ]
+        },
+        {
+            "type": "table",
+            "database": null,
+            "name": "cigar",
+            "withoutRowId": true,
+            "ddl": "CREATE TABLE cigar (id INTEGER NOT NULL, hash VARCHAR (64), product_id INTEGER, size_id INTEGER, purchase_date DATE, purchase_price NUMERIC (12, 2), location_id INTEGER, owner VARCHAR (64), smoked BOOLEAN, PRIMARY KEY (id), FOREIGN KEY (owner) REFERENCES users (id), UNIQUE (hash), FOREIGN KEY (product_id) REFERENCES product (id), FOREIGN KEY (size_id) REFERENCES size (id), FOREIGN KEY (location_id) REFERENCES location (id))",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "INTEGER",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL"
+                        }
+                    ]
+                },
+                {
+                    "name": "hash",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "product_id",
+                    "type": "INTEGER"
+                },
+                {
+                    "name": "size_id",
+                    "type": "INTEGER"
+                },
+                {
+                    "name": "purchase_date",
+                    "type": "DATE"
+                },
+                {
+                    "name": "purchase_price",
+                    "type": "NUMERIC (12, 2)"
+                },
+                {
+                    "name": "location_id",
+                    "type": "INTEGER"
+                },
+                {
+                    "name": "owner",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "smoked",
+                    "type": "BOOLEAN"
+                }
+            ],
+            "constraints": [
+                {
+                    "type": "PRIMARY KEY",
+                    "definition": "PRIMARY KEY (id)"
+                },
+                {
+                    "type": "FOREIGN KEY",
+                    "definition": "FOREIGN KEY (owner) REFERENCES users (id)"
+                },
+                {
+                    "type": "UNIQUE",
+                    "definition": "UNIQUE (hash)"
+                },
+                {
+                    "type": "FOREIGN KEY",
+                    "definition": "FOREIGN KEY (product_id) REFERENCES product (id)"
+                },
+                {
+                    "type": "FOREIGN KEY",
+                    "definition": "FOREIGN KEY (size_id) REFERENCES size (id)"
+                },
+                {
+                    "type": "FOREIGN KEY",
+                    "definition": "FOREIGN KEY (location_id) REFERENCES location (id)"
+                }
+            ],
+            "rows": [
+                [
+                    1,
+                    "088ec60b7cf2e357c2481b731fd251597ca4ad93",
+                    1,
+                    4,
+                    "2016-09-23",
+                    6.99,
+                    1,
+                    "2",
+                    1
+                ],
+                [
+                    2,
+                    "cdffc40fbf12c9fe68b1ded4ff21055db384c09a",
+                    2,
+                    4,
+                    "2016-09-23",
+                    7.79,
+                    1,
+                    "2",
+                    1
+                ],
+                [
+                    3,
+                    "8797b6393ac3b5a4977d1a0f348a87b0611790a6",
+                    3,
+                    12,
+                    "2016-09-23",
+                    7.29,
+                    2,
+                    "2",
+                    0
+                ],
+                [
+                    4,
+                    "0e23355a6641d84e21386047643b05d4a02996af",
+                    4,
+                    4,
+                    "2016-09-28",
+                    7.8,
+                    1,
+                    "2",
+                    1
+                ],
+                [
+                    5,
+                    "a74faaf496cf494f34ddcb48034b5d0dfa3a02bf",
+                    5,
+                    12,
+                    "2016-09-28",
+                    11.65,
+                    2,
+                    "2",
+                    0
+                ],
+                [
+                    6,
+                    "c0500bba46fe54885e4b47ac79c309e1280f2bda",
+                    6,
+                    4,
+                    "2015-07-10",
+                    5,
+                    1,
+                    "2",
+                    1
                 ]
             ]
         },
@@ -2624,432 +3004,6 @@
         {
             "type": "table",
             "database": null,
-            "name": "container_inventory",
-            "withoutRowId": true,
-            "ddl": "CREATE TABLE container_inventory (container_id INTEGER, hash VARCHAR (64), FOREIGN KEY (container_id) REFERENCES container (id), FOREIGN KEY (hash) REFERENCES cigar (hash))",
-            "columns": [
-                {
-                    "name": "container_id",
-                    "type": "INTEGER"
-                },
-                {
-                    "name": "hash",
-                    "type": "VARCHAR"
-                }
-            ],
-            "constraints": [
-                {
-                    "type": "FOREIGN KEY",
-                    "definition": "FOREIGN KEY (container_id) REFERENCES container (id)"
-                },
-                {
-                    "type": "FOREIGN KEY",
-                    "definition": "FOREIGN KEY (hash) REFERENCES cigar (hash)"
-                }
-            ],
-            "rows": [
-            ]
-        },
-        {
-            "type": "table",
-            "database": null,
-            "name": "rating",
-            "withoutRowId": true,
-            "ddl": "CREATE TABLE rating (id INTEGER NOT NULL, owner VARCHAR (64), cigar_id VARCHAR (64), session_id INTEGER, app_notes VARCHAR (200), app_score INTEGER, smoke_notes VARCHAR (200), smoke_score INTEGER, taste_notes VARCHAR (200), taste_score INTEGER, overall_notes VARCHAR (200), overall_score INTEGER, PRIMARY KEY (id), FOREIGN KEY (owner) REFERENCES users (id), FOREIGN KEY (cigar_id) REFERENCES cigar (id), FOREIGN KEY (session_id) REFERENCES session (id))",
-            "columns": [
-                {
-                    "name": "id",
-                    "type": "INTEGER",
-                    "constraints": [
-                        {
-                            "type": "NOT NULL",
-                            "definition": "NOT NULL"
-                        }
-                    ]
-                },
-                {
-                    "name": "owner",
-                    "type": "VARCHAR"
-                },
-                {
-                    "name": "cigar_id",
-                    "type": "VARCHAR"
-                },
-                {
-                    "name": "session_id",
-                    "type": "INTEGER"
-                },
-                {
-                    "name": "app_notes",
-                    "type": "VARCHAR"
-                },
-                {
-                    "name": "app_score",
-                    "type": "INTEGER"
-                },
-                {
-                    "name": "smoke_notes",
-                    "type": "VARCHAR"
-                },
-                {
-                    "name": "smoke_score",
-                    "type": "INTEGER"
-                },
-                {
-                    "name": "taste_notes",
-                    "type": "VARCHAR"
-                },
-                {
-                    "name": "taste_score",
-                    "type": "INTEGER"
-                },
-                {
-                    "name": "overall_notes",
-                    "type": "VARCHAR"
-                },
-                {
-                    "name": "overall_score",
-                    "type": "INTEGER"
-                }
-            ],
-            "constraints": [
-                {
-                    "type": "PRIMARY KEY",
-                    "definition": "PRIMARY KEY (id)"
-                },
-                {
-                    "type": "FOREIGN KEY",
-                    "definition": "FOREIGN KEY (owner) REFERENCES users (id)"
-                },
-                {
-                    "type": "FOREIGN KEY",
-                    "definition": "FOREIGN KEY (cigar_id) REFERENCES cigar (id)"
-                },
-                {
-                    "type": "FOREIGN KEY",
-                    "definition": "FOREIGN KEY (session_id) REFERENCES session (id)"
-                }
-            ],
-            "rows": [
-                [
-                    1,
-                    "2",
-                    "1",
-                    1,
-                    "-",
-                    15,
-                    "-",
-                    20,
-                    "-",
-                    20,
-                    "-",
-                    20
-                ],
-                [
-                    2,
-                    "2",
-                    "4",
-                    2,
-                    "-",
-                    15,
-                    "-",
-                    20,
-                    "Lots of peppery spice and some woodiness.",
-                    20,
-                    "-",
-                    25
-                ],
-                [
-                    3,
-                    "2",
-                    "6",
-                    3,
-                    "-",
-                    12,
-                    "-",
-                    15,
-                    "-",
-                    20,
-                    "Very mild",
-                    25
-                ],
-                [
-                    4,
-                    "2",
-                    "2",
-                    4,
-                    "-",
-                    14,
-                    "Somewhat uneven burn. This may have been my own fault due to smoking while changing the oil in the car.  Otherwise it seemed totally fine.",
-                    20,
-                    "-",
-                    20,
-                    "-",
-                    25
-                ]
-            ]
-        },
-        {
-            "type": "table",
-            "database": null,
-            "name": "size",
-            "withoutRowId": true,
-            "ddl": "CREATE TABLE size (\n\tid INTEGER NOT NULL, \n\tname VARCHAR(64), \n\twidth_64 NUMERIC(12, 2), \n\twidth_mm NUMERIC(12, 2), \n\tlength_cm NUMERIC(12, 2), \n\tlength_in NUMERIC(12, 2), \n\tPRIMARY KEY (id)\n)",
-            "columns": [
-                {
-                    "name": "id",
-                    "type": "INTEGER",
-                    "constraints": [
-                        {
-                            "type": "NOT NULL",
-                            "definition": "NOT NULL"
-                        }
-                    ]
-                },
-                {
-                    "name": "name",
-                    "type": "VARCHAR"
-                },
-                {
-                    "name": "width_64",
-                    "type": "NUMERIC (12, 2)"
-                },
-                {
-                    "name": "width_mm",
-                    "type": "NUMERIC (12, 2)"
-                },
-                {
-                    "name": "length_cm",
-                    "type": "NUMERIC (12, 2)"
-                },
-                {
-                    "name": "length_in",
-                    "type": "NUMERIC (12, 2)"
-                }
-            ],
-            "constraints": [
-                {
-                    "type": "PRIMARY KEY",
-                    "definition": "PRIMARY KEY (id)\n"
-                }
-            ],
-            "rows": [
-                [
-                    1,
-                    "Cigarillo",
-                    3.5,
-                    21,
-                    8,
-                    8
-                ],
-                [
-                    2,
-                    "Rothschild",
-                    4.5,
-                    48,
-                    11,
-                    19
-                ],
-                [
-                    3,
-                    "Robolo",
-                    4.5,
-                    60,
-                    11,
-                    24
-                ],
-                [
-                    4,
-                    "Robusto",
-                    4.875,
-                    50,
-                    12,
-                    20
-                ],
-                [
-                    5,
-                    "Small Panatela",
-                    5,
-                    33,
-                    13,
-                    13
-                ],
-                [
-                    6,
-                    "Ascot",
-                    4.5,
-                    24,
-                    11,
-                    13
-                ],
-                [
-                    7,
-                    "Petit Corona",
-                    5.125,
-                    42,
-                    13,
-                    17
-                ],
-                [
-                    8,
-                    "Carlota",
-                    5.125,
-                    35,
-                    14,
-                    14
-                ],
-                [
-                    9,
-                    "Corona",
-                    5.5,
-                    42,
-                    14,
-                    17
-                ],
-                [
-                    10,
-                    "Corona Gorda",
-                    5.625,
-                    46,
-                    14,
-                    18
-                ],
-                [
-                    11,
-                    "Panatela",
-                    6,
-                    38,
-                    15,
-                    15
-                ],
-                [
-                    12,
-                    "Toro",
-                    6,
-                    50,
-                    15,
-                    20
-                ],
-                [
-                    13,
-                    "Corona Grande",
-                    6.125,
-                    42,
-                    16,
-                    17
-                ],
-                [
-                    14,
-                    "Lonsdale",
-                    6.5,
-                    42,
-                    17,
-                    17
-                ],
-                [
-                    15,
-                    "Churchill",
-                    7,
-                    47,
-                    18,
-                    19
-                ],
-                [
-                    16,
-                    "Double Corona",
-                    7.625,
-                    49,
-                    19,
-                    19
-                ],
-                [
-                    17,
-                    "Presidente",
-                    8,
-                    50,
-                    20,
-                    20
-                ],
-                [
-                    18,
-                    "Gran Corona",
-                    9.25,
-                    47,
-                    23,
-                    19
-                ],
-                [
-                    19,
-                    "Double Toro\/Gordo",
-                    6,
-                    60,
-                    15,
-                    24
-                ]
-            ]
-        },
-        {
-            "type": "table",
-            "database": null,
-            "name": "session",
-            "withoutRowId": true,
-            "ddl": "CREATE TABLE session (\n\tid INTEGER NOT NULL, \n\towner VARCHAR(64), \n\tdate DATE, \n\tPRIMARY KEY (id), \n\tFOREIGN KEY(owner) REFERENCES users (id)\n)",
-            "columns": [
-                {
-                    "name": "id",
-                    "type": "INTEGER",
-                    "constraints": [
-                        {
-                            "type": "NOT NULL",
-                            "definition": "NOT NULL"
-                        }
-                    ]
-                },
-                {
-                    "name": "owner",
-                    "type": "VARCHAR"
-                },
-                {
-                    "name": "date",
-                    "type": "DATE"
-                }
-            ],
-            "constraints": [
-                {
-                    "type": "PRIMARY KEY",
-                    "definition": "PRIMARY KEY (id)"
-                },
-                {
-                    "type": "FOREIGN KEY",
-                    "definition": "FOREIGN KEY(owner) REFERENCES users (id)\n"
-                }
-            ],
-            "rows": [
-                [
-                    1,
-                    "2",
-                    "2016-09-23 21:00"
-                ],
-                [
-                    2,
-                    "2",
-                    "2016-09-28 14:00"
-                ],
-                [
-                    3,
-                    "2",
-                    "2015-07-11 21:00"
-                ],
-                [
-                    4,
-                    "2",
-                    "2016-10-03 18:00"
-                ]
-            ]
-        },
-        {
-            "type": "table",
-            "database": null,
             "name": "session_inventory",
             "withoutRowId": true,
             "ddl": "CREATE TABLE session_inventory (session_id INTEGER, cigar_id VARCHAR (64), FOREIGN KEY (session_id) REFERENCES session (id), FOREIGN KEY (cigar_id) REFERENCES cigar (id))",
@@ -3079,9 +3033,9 @@
         {
             "type": "table",
             "database": null,
-            "name": "location",
+            "name": "container_type",
             "withoutRowId": true,
-            "ddl": "CREATE TABLE location (\n\tid INTEGER NOT NULL, \n\tname VARCHAR(64), \n\towner VARCHAR(64), \n\tPRIMARY KEY (id), \n\tFOREIGN KEY(owner) REFERENCES users (id)\n)",
+            "ddl": "CREATE TABLE container_type (\n\tid INTEGER NOT NULL, \n\tname VARCHAR(64), \n\tPRIMARY KEY (id)\n)",
             "columns": [
                 {
                     "name": "id",
@@ -3096,10 +3050,86 @@
                 {
                     "name": "name",
                     "type": "VARCHAR"
+                }
+            ],
+            "constraints": [
+                {
+                    "type": "PRIMARY KEY",
+                    "definition": "PRIMARY KEY (id)\n"
+                }
+            ],
+            "rows": [
+                [
+                    1,
+                    "Box"
+                ],
+                [
+                    2,
+                    "Case"
+                ]
+            ]
+        },
+        {
+            "type": "table",
+            "database": null,
+            "name": "container_inventory",
+            "withoutRowId": true,
+            "ddl": "CREATE TABLE container_inventory (container_id INTEGER, hash VARCHAR (64), FOREIGN KEY (container_id) REFERENCES container (id), FOREIGN KEY (hash) REFERENCES cigar (hash))",
+            "columns": [
+                {
+                    "name": "container_id",
+                    "type": "INTEGER"
                 },
                 {
-                    "name": "owner",
+                    "name": "hash",
                     "type": "VARCHAR"
+                }
+            ],
+            "constraints": [
+                {
+                    "type": "FOREIGN KEY",
+                    "definition": "FOREIGN KEY (container_id) REFERENCES container (id)"
+                },
+                {
+                    "type": "FOREIGN KEY",
+                    "definition": "FOREIGN KEY (hash) REFERENCES cigar (hash)"
+                }
+            ],
+            "rows": [
+            ]
+        },
+        {
+            "type": "table",
+            "database": null,
+            "name": "transfer",
+            "withoutRowId": true,
+            "ddl": "CREATE TABLE transfer (id INTEGER NOT NULL, cigar_id VARCHAR (64), from_id INTEGER, to_id INTEGER, date DATETIME, PRIMARY KEY (id), FOREIGN KEY (cigar_id) REFERENCES cigar (id), FOREIGN KEY (from_id) REFERENCES location (id), FOREIGN KEY (to_id) REFERENCES location (id))",
+            "columns": [
+                {
+                    "name": "id",
+                    "type": "INTEGER",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL"
+                        }
+                    ]
+                },
+                {
+                    "name": "cigar_id",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "from_id",
+                    "type": "INTEGER"
+                },
+                {
+                    "name": "to_id",
+                    "type": "INTEGER"
+                },
+                {
+                    "name": "date",
+                    "type": "DATETIME"
                 }
             ],
             "constraints": [
@@ -3109,20 +3139,18 @@
                 },
                 {
                     "type": "FOREIGN KEY",
-                    "definition": "FOREIGN KEY(owner) REFERENCES users (id)\n"
+                    "definition": "FOREIGN KEY (cigar_id) REFERENCES cigar (id)"
+                },
+                {
+                    "type": "FOREIGN KEY",
+                    "definition": "FOREIGN KEY (from_id) REFERENCES location (id)"
+                },
+                {
+                    "type": "FOREIGN KEY",
+                    "definition": "FOREIGN KEY (to_id) REFERENCES location (id)"
                 }
             ],
             "rows": [
-                [
-                    1,
-                    "Smoked",
-                    "2"
-                ],
-                [
-                    2,
-                    "Tupperdor",
-                    "2"
-                ]
             ]
         }
     ]
