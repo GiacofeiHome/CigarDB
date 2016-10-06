@@ -1,0 +1,55 @@
+{% extends "_base.html" %}
+
+{% macro print_rating(rating) -%}
+  <div class="row">
+    <h3>Rating from {{ rating.session.date }}</h3>
+  </div>
+  <div class="row">
+    <h3>Scores</h3>
+    Appreance: {{ rating.app_score }}<br>
+    Smoking Characteristics: {{ rating.smoke_score }}<br>
+    Taste: {{ rating.taste_score }}<br>
+    Overall: {{ rating.overall_score }}<br>
+    <b>Total: {{ rating.total }}</b>
+  </div>
+  <div class="row">
+    <h4>Appearance</h4>
+    {{ rating.app_notes }}
+  </div>
+  <div class="row">
+    <h4>Smoking Characteristics</h4>
+    {{ rating.smoke_notes }}
+  </div>
+  <div class="row">
+    <h4>Taste</h4>
+    {{ rating.taste_notes }}
+  </div>
+  <div class="row">
+    <h4>Overall</h4>
+    {{ rating.overall_notes }}
+  </div>
+ 
+{%- endmacro %}
+
+{% block content %}
+
+{% if cigar.owner == current_user.id %}
+
+<div class="body-content">
+  <div class="row">
+    <h1>{{ cigar.product.brand.name }} - {{ cigar.product.name }}</h1>
+    
+    {% for rating in cigar.ratings %}
+      {% if rating.owner == current_user.id %}
+        {{ print_rating(rating) }}
+      {% endif %}
+    {% endfor %}
+
+  </div>
+</div>
+
+{% else %}
+<h1>{{ cigar.owner }} != {{ current_user.id }}!!!</h1>
+{% endif %}
+
+{% endblock %}
